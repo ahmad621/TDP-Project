@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    
+<h1 style="text-align: center; color:red;"><marquee behavior="scroll" direction="up" scrollamount="1">Employee Database Details</marquee> </h1>
+   
+</head>
+
+<script>
+   
+    var records =
+        [
+            { "ninumber": "ZS502747A", "fullname": "Chris P Bacon", "phone": "07659-831024", "address": "123 Elliot Hill", "department": "IT" },
+            { "ninumber": "XS130502B", "fullname": "Miles A Head", "phone": "07666-616680", "address": "321 Haha Road", "department": "Sales" },
+            { "ninumber": "MY034526D", "fullname": "Rick O'Shea", "phone": "07440-003065", "address": "64 Zoo Lane", "department": "HR" },
+            { "ninumber": "AK311470", "fullname": "Robyn Banks", "phone": "07342-472921", "address": "324 Langton Ridgeway", "department": "HR" },
+            { "ninumber": "LY682275B", "fullname": "Lorne Mowers", "phone": "07822-821023", "address": "234 Julian Market", "department": "IT" },
+            { "ninumber": "BK227215B", "fullname": "Frank N Stein", "phone": "07661-522545", "address": "12 Springfield Grange", "department": "Sales" },
+            { "ninumber": "XB363374C", "fullname": "Hedda Hare", "phone": "07563-758264", "address": "54 Blackbird Crescent", "department": "IT" },
+            { "ninumber": "MY501327A", "fullname": "Upton O Goode", "phone": "07401-414740", "address": "2 St Margarets Drive", "department": "IT" },
+            { "ninumber": "TT405395B", "fullname": "Marius Quick", "phone": "07870-297789", "address": "98 Earl Path", "department": "IT" },
+            { "ninumber": "AZ764036A", "fullname": "Max E Mumm", "phone": "07872-642897", "address": "233 Lady Smith Avenue", "department": "IT" },
+            { "ninumber": "ES73841C", "fullname": "Yul B Allwright", "phone": "07750-872412", "address": "45 Fountains Broadway", "department": "Sales" },
+            { "ninumber": "WX465470A", "fullname": "Lori Driver", "phone": "07773-782275", "address": "65 Burlington Lodge", "department": "HR" },
+            { "ninumber": "AK625470D", "fullname": "Shirley U Care", "phone": "07569-060117", "address": "97 Holderness Drive", "department": "HR" },
+            { "ninumber": "SW098272B", "fullname": "Felix Cited", "phone": "07394-529507", "address": "32 Banningham Court", "department": "Sales" },
+            { "ninumber": "OB043941D", "fullname": "Sandy Beech", "phone": "07958-301691", "address": "3 Third Mount", "department": "Sales" }
+        ];
+
+    var newRecourds = records;
+    function addrecord() {
+        newRecourds.push(
+            {
+                "fullname": document.getElementById("f").value,
+                "ninumber": document.getElementById("n").value,
+                "address": document.getElementById("a").value,
+                "phone": document.getElementById("p").value,
+                "department": document.getElementById("d").value,
+            }
+        )
+
+        updateTable(newRecourds, filter);
+    }
+
+    function updateTable(newRecourds, filter) {
+
+        if (filter == false) {
+            newRecourds = records;
+        }
+
+        var table = document.getElementById("employeetable");
+        var tableBody = table.children[1];
+
+        // remove all the data from the table
+        if (tableBody.children.length > 0) {
+            var new_tbod = document.createElement('tbody');
+            tableBody.parentNode.replaceChild(new_tbod, tableBody);
+        }
+
+        //Build table body
+        for (var i = 0; i < newRecourds.length; i++) {
+            var row = document.createElement("tr");
+
+            tableBody = table.children[1]
+            tableBody.appendChild(row);
+
+            // Build table data
+            for (var j = 0; j < 5; j++) {
+                var data = document.createElement("td");
+                data.innerHTML = (Object.values(newRecourds[i])[j]);
+                row.appendChild(data);
+            }
+            //add delete button
+            var btn = document.createElement("input")
+            btn.type = "button"
+            btn.style.backgroundColor = 'red';
+            btn.style.color = 'white';
+            btn.value = "Delete";
+            btn.id = newRecourds[i].ninumber;
+            btn.onclick = function () {
+                deleteMethod(this.id);
+            }
+            row.appendChild(btn);
+
+			//add edit button
+            var btn = document.createElement("input")
+            btn.type = "button"
+            btn.style.backgroundColor = 'blue';
+            btn.style.color = 'white';
+            btn.value = "Edit";
+            btn.dataset.ni = newRecourds[i].ninumber;
+            btn.onclick = function () {
+                editMethod(this);
+            }
+
+            row.appendChild(btn);
+        }
+
+        function deleteMethod(ninumber) {
+            event.stopPropagation();
+            var confirmation = confirm("Are you sure you want to delete employee " + row.id);
+            if (confirmation) {
+
+                const index = newRecourds.map(function (e) {
+                    return e.ninumber;
+                }).indexOf(ninumber);
+
+                newRecourds.splice(index, 1);
+                updateTable(newRecourds);
+
+            }
+
+        }
+
+    }
+
+    function editMethod(btn) {
+        var id = btn.dataset.ni;
+        var table = document.getElementById("employeetable");
+        table.setAttribute('hidden', 'hidden');
+
+        var newPerson = document.getElementById("newPerson");
+        newPerson.setAttribute('hidden', 'hidden');
+
+        document.getElementById("filterby").setAttribute('hidden', 'hidden');
+        document.getElementById("filterbybtn").setAttribute('hidden', 'hidden');
+
+
+        document.getElementById("editNI").removeAttribute('hidden');
+        document.getElementById("editName").removeAttribute('hidden');
+        document.getElementById("editPerson").removeAttribute('hidden');
+        document.getElementById("editPhone").removeAttribute('hidden');
+        document.getElementById("editAddress").removeAttribute('hidden');
+        document.getElementById("editDep").removeAttribute('hidden');
+
+
+        for (var i = 0; i < newRecourds.length; i++) {
+            if (newRecourds[i].ninumber == id) {
+                document.getElementById("editNI").value = newRecourds[i].ninumber;
+                document.getElementById("editName").value = newRecourds[i].fullname;
+                document.getElementById("editPhone").value = newRecourds[i].phone;
+                document.getElementById("editAddress").value = newRecourds[i].address;
+                document.getElementById("editDep").value = newRecourds[i].department;
+                
+            }
+        }
+    }
+    function editrecord(btn) {
+
+
+        var id = document.getElementById("editNI").value;
+        for (var i = 0; i < newRecourds.length; i++) {
+            if (newRecourds[i].ninumber == id) {
+                newRecourds[i].phone = document.getElementById("editPhone").value;
+                newRecourds[i].fullname = document.getElementById("editName").value;
+                newRecourds[i].address = document.getElementById("editAddress").value;
+                newRecourds[i].ninumber = document.getElementById("editNI").value;
+                newRecourds[i].department = document.getElementById("editDep").value;
+                
+            }
+        }
+
+        updateTable(newRecourds);
+
+        document.getElementById("editNI").setAttribute('hidden', 'hidden');
+        document.getElementById("editName").setAttribute('hidden', 'hidden');
+        document.getElementById("editPhone").setAttribute('hidden', 'hidden');
+        document.getElementById("editPerson").setAttribute('hidden', 'hidden');
+        document.getElementById("editAddress").setAttribute('hidden', 'hidden');
+        document.getElementById("editDep").setAttribute('hidden', 'hidden');
+
+        var table = document.getElementById("employeetable");
+        table.removeAttribute('hidden');
+
+        document.getElementById("filterby").removeAttribute('hidden');
+        document.getElementById("filterbybtn").removeAttribute('hidden');
+
+
+        var newPerson = document.getElementById("newPerson");
+        newPerson.removeAttribute('hidden');
+
+        document.getElementById("editNI").setAttribute('hidden', 'hidden');
+        document.getElementById("editName").setAttribute('hidden', 'hidden');
+        document.getElementById("editPerson").setAttribute('hidden', 'hidden');
+        document.getElementById("editPhone").setAttribute('hidden', 'hidden');
+        document.getElementById("editAddress").setAttribute('hidden', 'hidden');
+        document.getElementById("editDep").setAttribute('hidden', 'hidden');
+
+    }
+
+    function filter() {
+        var filterby = document.getElementById("filterby").value;
+        var filterTable = new Array();
+
+        for (var i = 0; i < newRecourds.length; i++) {
+            if (filterby.toLowerCase() == newRecourds[i].department.toLowerCase()) {
+                filterTable.push(newRecourds[i]);
+            }
+            if (filterby.toLowerCase() == "all"
+			|| filterby == "") {
+                updateTable(newRecourds, false);
+                return;
+            }
+        }
+        updateTable(filterTable, true);
+
+    }
+
+
+</script>
+
+<div>
+    <input type="text" id="filterby" placeholder="Type all to remove filter">
+    <input type="button" style="background-color:black;color:yellow;width:100px; height:25px;" id="filterbybtn" value="Filter Records" onclick="filter()">
+</div>
+<div>
+    <table id="employeetable">
+        <thead>
+            <tr style="background-color:#3173AD; height:30px;">
+                <th style="color:white; font-size:10pt;">NI Number </th>
+                <th style="color:white; font-size:10pt;">Full Name</th>
+                <th style="color:white; font-size:10pt;">Phone No</th>
+                <th style="color:white; font-size:10pt;">Address</th>
+                <th style="color:white; font-size:10pt;">Department</th>
+                <th style="color:white; font-size:10pt;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+</div>
+<br>
+
+<body onload="updateTable(records)" style="background-color:lightgreen;">
+    <div id="newPerson">
+
+        <input id="f">
+        <input id="n">
+        <input id="a">
+        <input id="p">
+        <input id="d">
+        <input type="button" style="background-color:black;color:yellow;width:100px; height:25px;" value="Add Records" onclick="addrecord()">
+
+    </div>
+    <div id="">
+
+        <input id="editNI" hidden>
+        <input id="editName" hidden>
+        <input id="editPhone" hidden>
+        <input id="editAddress" hidden>
+        <input id="editDep" hidden>
+        <input id="editPerson" type="button" value="Edit records" onclick="editrecord(this)" hidden>
+
+    </div>
+
+
+</body>
+</html>
+
